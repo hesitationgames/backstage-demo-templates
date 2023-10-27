@@ -97,20 +97,6 @@ spec:
         title: initial-setup-${{ parameters.type }}-${{ parameters.name }}
         description: Initial setup - ${{ parameters.description }}
 
-    # - id: addRepoToSonarcloud
-    #   name: Add repo to SonarCloud
-    #   action: http:backstage:request
-    #   input:
-    #     method: POST
-    #     path: '/api/proxy/sonarcloud/project/create'
-    #     headers:
-    #       authorization: 'Bearer f564708bfc7b9cde3a3485d905883fb67ad998a0'
-    #     params:
-    #       name: '${{parameters.type}}-${{parameters.name}}'
-    #       organization: "hesitationgames"
-    #       project: 'hesitationgames_${{parameters.type}}-${{parameters.name}}'
-    #       visibility: "private"
-
     - id: register
       name: Register
       action: catalog:register
