@@ -1,0 +1,15 @@
+{
+    "name": "${{values.type}}-${{values.name}}",
+    "version": "1.0.0",
+    "description": "${{values.description}}",
+    "main": "app.js",
+    "scripts": {
+      "test": "echo \"No test specified\" "
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+      "serverless": "3.0.1"
+    }
+  }

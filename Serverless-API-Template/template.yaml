@@ -1,0 +1,123 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: Serverless-API-Template
+  title: Serverless NodeJS API Template
+  description: A serverless nodejs application template for public APIs
+  labels:
+    type: serverless
+    micro: service
+    language: nodejs
+  tags:
+    - backend
+    - serverless
+    - nodejs
+  links:
+    - title: Serverless framework
+      url: https://www.serverless.com/framework/docs
+      icon: dashboard
+spec:
+  owner: HesitationGames
+  type: service
+  parameters:
+    - title: Fill in some steps
+      required:
+        - type
+        - name
+        - owner
+      properties:
+        type:
+          title: Component type
+          type: string
+          description: Component type
+          default: Serverless
+          readOnly: true
+        name:
+          title: Application name
+          type: string
+          description: Unique name of the application (without Type)
+          pattern: "^[^_]*$"
+          maxLength: 16
+          ui:autofocus: true
+          ui:options:
+            rows: 5
+        description:
+          title: Description
+          type: string
+          description: Description of the component
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the backstage component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Group
+
+
+  # here's the steps that are executed in series in the scaffolder backend
+  steps:
+
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: ./skeleton
+        copyWithoutRender:
+          - .github/workflows/*
+        values:
+          description: ${{ parameters.description }}
+          name: ${{ parameters.name | lower}}
+          owner: ${{ parameters.owner | lower}}
+          type: ${{ parameters.type | lower}}
+          name_upper: ${{ parameters.name | upper}}
+          owner_upper: ${{ parameters.owner | upper}}
+          type_upper: ${{ parameters.type | upper}}
+
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: ${{ parameters.description }}
+        repoUrl: github.com?owner=hesitationgames&repo=${{ parameters.type }}-${{ parameters.name }}
+        repoVisibility: private
+        collaborators:
+          - access: maintain
+            team: DevSecOpsTeam
+          - access: push
+            team: ProductTeam
+
+    - id: initial_pull_request
+      name: Initial pull requests
+      action: publish:github:pull-request
+      input:
+        repoUrl: github.com?owner=hesitationgames&repo=${{ parameters.type }}-${{ parameters.name }}
+        branchName: feature/initial-setup-${{ parameters.type }}-${{ parameters.name }}
+        title: initial-setup-${{ parameters.type }}-${{ parameters.name }}
+        description: Initial setup - ${{ parameters.description }}
+
+    # - id: addRepoToSonarcloud
+    #   name: Add repo to SonarCloud
+    #   action: http:backstage:request
+    #   input:
+    #     method: POST
+    #     path: '/api/proxy/sonarcloud/project/create'
+    #     headers:
+    #       authorization: 'Bearer f564708bfc7b9cde3a3485d905883fb67ad998a0'
+    #     params:
+    #       name: '${{parameters.type}}-${{parameters.name}}'
+    #       organization: "hesitationgames"
+    #       project: 'hesitationgames_${{parameters.type}}-${{parameters.name}}'
+    #       visibility: "private"
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+
+  output:
+    remoteUrl: ${{ steps.publish.output.remoteUrl }}
+    entityRef: ${{ steps.register.output.entityRef }}
