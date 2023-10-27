@@ -1,0 +1,20 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{values.type}}-${{values.name}}
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - title: Serverless framework
+      url: https://www.serverless.com/framework/docs
+      icon: dashboard
+  description: ${{values.description}}
+  tags:
+    - backend
+    - sls
+    - nodejs
+spec:
+  type: service
+  lifecycle: experimental
+  owner: ${{values.owner}}
+  # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
