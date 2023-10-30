@@ -54,11 +54,12 @@ spec:
           ui:options:
             allowedKinds:
               - Group
+              - User
         system:
           title: System
           type: string
           description: System of this component
-          ui:field: SystemPicker
+          ui:field: OwnerPicker
           ui:options:
             allowedKinds:
               - System
