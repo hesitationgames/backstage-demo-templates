@@ -17,7 +17,7 @@ metadata:
       url: https://www.serverless.com/framework/docs
       icon: dashboard
 spec:
-  owner: HesitationGames
+  owner: backends
   type: service
   parameters:
     - title: Fill in some steps
@@ -25,6 +25,7 @@ spec:
         - type
         - name
         - owner
+        - system
       properties:
         type:
           title: Component type
@@ -53,6 +54,14 @@ spec:
           ui:options:
             allowedKinds:
               - Group
+        system:
+          title: System
+          type: string
+          description: System of this component
+          ui:field: SystemPicker
+          ui:options:
+            allowedKinds:
+              - System
 
 
   # here's the steps that are executed in series in the scaffolder backend
@@ -74,35 +83,35 @@ spec:
           owner_upper: ${{ parameters.owner | upper}}
           type_upper: ${{ parameters.type | upper}}
 
-    - id: publish
-      name: Publish
-      action: publish:github
-      input:
-        allowedHosts: ['github.com']
-        description: ${{ parameters.description }}
-        repoUrl: github.com?owner=hesitationgames&repo=${{ parameters.type }}-${{ parameters.name }}
-        repoVisibility: private
-        collaborators:
-          - access: maintain
-            team: DevSecOpsTeam
-          - access: push
-            team: ProductTeam
+    # - id: publish
+    #   name: Publish
+    #   action: publish:github
+    #   input:
+    #     allowedHosts: ['github.com']
+    #     description: ${{ parameters.description }}
+    #     repoUrl: github.com?owner=hesitationgames&repo=${{ parameters.type }}-${{ parameters.name }}
+    #     repoVisibility: private
+    #     collaborators:
+    #       - access: maintain
+    #         team: DevSecOpsTeam
+    #       - access: push
+    #         team: ProductTeam
 
-    - id: initial_pull_request
-      name: Initial pull requests
-      action: publish:github:pull-request
-      input:
-        repoUrl: github.com?owner=hesitationgames&repo=${{ parameters.type }}-${{ parameters.name }}
-        branchName: feature/initial-setup-${{ parameters.type }}-${{ parameters.name }}
-        title: initial-setup-${{ parameters.type }}-${{ parameters.name }}
-        description: Initial setup - ${{ parameters.description }}
+    # - id: initial_pull_request
+    #   name: Initial pull requests
+    #   action: publish:github:pull-request
+    #   input:
+    #     repoUrl: github.com?owner=hesitationgames&repo=${{ parameters.type }}-${{ parameters.name }}
+    #     branchName: feature/initial-setup-${{ parameters.type }}-${{ parameters.name }}
+    #     title: initial-setup-${{ parameters.type }}-${{ parameters.name }}
+    #     description: Initial setup - ${{ parameters.description }}
 
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-        catalogInfoPath: '/catalog-info.yaml'
+    # - id: register
+    #   name: Register
+    #   action: catalog:register
+    #   input:
+    #     repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+    #     catalogInfoPath: '/catalog-info.yaml'
 
   output:
     remoteUrl: ${{ steps.publish.output.remoteUrl }}
