@@ -4,12 +4,16 @@
     "description": "${{values.description}}",
     "main": "app.js",
     "scripts": {
-      "test": "echo \"No test specified\" "
+        "test": "echo \"No test specified\" "
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "devDependencies": {
-      "serverless": "3.0.1"
+        "serverless": "3.2.0"
+    },
+    "dependencies": {
+        "serverless-offline": "^13.2.0",
+        "serverless-openapi-documenter": "^0.0.90"
     }
-  }
+}
