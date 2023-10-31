@@ -20,6 +20,10 @@ spec:
   system: ${{values.system}}
   consumesApis:
     - ${{values.type}}-${{values.name}}-api
+{% if values.database == true %}
+  dependsOn:
+    - resource:default/${{values.type}}-${{values.name}}-database
+{% endif %}
   # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
 
 
@@ -125,4 +129,6 @@ spec:
   lifecycle: experimental
   owner: ${{values.owner}}
   system: ${{values.system}}
+  dependsOn:
+    - resource:default/staging-postgres-cluster
 {% endif %}
