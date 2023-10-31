@@ -91,7 +91,7 @@ spec:
           system_upper: ${{ parameters.system | lower}}
 
     - if: ${{ true if parameters.database else false}}
-    - id: createDatabase
+      id: createDatabase
       name: Creates a postgresDatabase
       action: http:backstage:request
       input:
