@@ -63,7 +63,10 @@ spec:
           ui:options:
             allowedKinds:
               - System
-
+        database:
+          title: Postgres Database
+          type: boolean
+          default: false
 
   # here's the steps that are executed in series in the scaffolder backend
   steps:
@@ -81,11 +84,19 @@ spec:
           owner: ${{ parameters.owner | lower}}
           type: ${{ parameters.type | lower}}
           system: ${{ parameters.system | lower}}
+          database: ${{ parameters.database }}
           name_upper: ${{ parameters.name | upper}}
           owner_upper: ${{ parameters.owner | upper}}
           type_upper: ${{ parameters.type | upper}}
           system_upper: ${{ parameters.system | lower}}
 
+    - if: ${{ true if parameters.database else false}}
+    - id: createDatabase
+      name: Creates a postgresDatabase
+      action: http:backstage:request
+      input:
+        method: POST
+        path: '/api/proxy/self-service/create-db'
 
     - id: publish
       name: Publish

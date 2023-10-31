@@ -109,3 +109,20 @@ spec:
               schema:
                 $ref: '#/components/schemas/greetingsBody'
           required: true
+
+{% if values.database == true %}
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: ${{values.type}}-${{values.name}}-database
+  description: SQL database
+  links:
+    - url: postgres://miusuario:mipassword@localhost:5432/mi_base_de_datos
+      icon: dashboard
+spec:
+  type: database
+  lifecycle: experimental
+  owner: ${{values.owner}}
+  system: ${{values.system}}
+{% endif %}
