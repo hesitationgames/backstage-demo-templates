@@ -1,0 +1,65 @@
+service: ${{values.type}}-${{values.name}}
+configValidationMode: warn
+frameworkVersion: '3.2.0'
+
+provider:
+  name: aws
+  profile: juan
+  runtime: nodejs18.x
+  endpointType: REGIONAL
+  apiName: "${self:service}-${self:custom.stage}-api"
+  region: us-east-1
+  memorySize: 128
+  timeout: 10
+  stage: ${opt:stage, 'staging'}
+  apiGateway:
+    request:
+      schemas:
+        post-hello-model:
+          name: PostHelloModel
+          schema: ${file(./doc/openapi.yaml):components.schemas.greetingsBody}
+          description: "A Model validation for hello"
+
+package:
+  individually: true
+  patterns:
+    - "!*/**"
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  static_envs:
+    prod: prod
+    other: staging
+  envtype: ${self:custom.static_envs.${opt:stage}, self:custom.static_envs.other}
+  documentation: ${file(./doc/openapi.yaml)}
+
+plugins:
+  # - serverless-offline
+  - serverless-openapi-documenter
+
+functions:
+  getHelloWord:
+    handler: app.handler
+    name: "${self:service}-${self:custom.stage}-get-hello-world"
+    package:
+      patterns:
+        - "app.js"
+    events:
+      - http:
+          path: /hello-world/
+          method: get
+          cors: true
+  postHelloWord:
+    handler: app.handler
+    name: "${self:service}-${self:custom.stage}-post-hello-world"
+    package:
+      patterns:
+        - "app.js"
+    events:
+      - http:
+          path: /hello-world/
+          method: post
+          cors: true
+          request:
+            schemas:
+              application/json: post-hello-model

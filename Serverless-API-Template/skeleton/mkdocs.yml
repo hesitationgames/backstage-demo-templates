@@ -1,0 +1,8 @@
+site_name: '${{values.type}}-${{values.name}}'
+site_description: 'Service'
+
+nav:
+  - Home: index.md
+
+plugins:
+  - techdocs-core

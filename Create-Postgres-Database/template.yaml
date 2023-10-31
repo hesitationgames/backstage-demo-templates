@@ -1,0 +1,130 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: Create-Postgres-Database
+  title: Create a postgres database
+  description: Creates a postgres database in a cluster
+  labels:
+    type: Database
+    language: SQL
+    engine: postgres
+  tags:
+    - backend
+    - database
+    - sql
+spec:
+  owner: backends
+  type: resource
+  parameters:
+    - title: Fill in some steps
+      required:
+        - type
+        - name
+        - owner
+        - system
+        - cluster
+      properties:
+        type:
+          title: Component type
+          type: string
+          description: Component type
+          default: db
+          readOnly: true
+        name:
+          title: Database name
+          type: string
+          description: Unique name of the database (without Type)
+          pattern: "^[^_]*$"
+          maxLength: 16
+          ui:autofocus: true
+          ui:options:
+            rows: 5
+        description:
+          title: Description
+          type: string
+          description: Description of the component
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the backstage component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Group
+              - User
+        system:
+          title: System
+          type: string
+          description: System of this component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - System
+        cluster:
+          title: Cluster
+          type: string
+          description: Postgres cluster
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Resource
+
+  # here's the steps that are executed in series in the scaffolder backend
+  steps:
+
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: ./skeleton
+        copyWithoutRender:
+          - .github/workflows/*
+        values:
+          description: ${{ parameters.description }}
+          name: ${{ parameters.name | lower}}
+          owner: ${{ parameters.owner | lower}}
+          type: ${{ parameters.type | lower}}
+          system: ${{ parameters.system | lower}}
+          cluster: ${{ parameters.cluster | lower}}
+          name_upper: ${{ parameters.name | upper}}
+          owner_upper: ${{ parameters.owner | upper}}
+          type_upper: ${{ parameters.type | upper}}
+          system_upper: ${{ parameters.system | lower}}
+
+
+    - id: createDatabase
+      name: Creates a postgresDatabase
+      action: http:backstage:request
+      input:
+        method: POST
+        path: '/api/proxy/self-service/create-db'
+
+
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: ${{ parameters.description }}
+        repoUrl: github.com?owner=hesitationgames&repo=databases
+        repoVisibility: private
+
+    - id: initial_pull_request
+      name: Initial pull requests
+      action: publish:github:pull-request
+      input:
+        repoUrl: github.com?owner=hesitationgames&repo=databases
+        branchName: adding-database-${{ parameters.type }}-${{ parameters.name }}
+        title: adding-database-${{ parameters.type }}-${{ parameters.name }}
+        description: Initial setup - ${{ parameters.description }}
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+
+  output:
+    remoteUrl: ${{ steps.publish.output.remoteUrl }}
+    entityRef: ${{ steps.register.output.entityRef }}
