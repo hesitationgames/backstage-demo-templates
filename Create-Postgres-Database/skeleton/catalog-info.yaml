@@ -1,111 +1,14 @@
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: ${{values.type}}-${{values.name}}-app
-  annotations:
-    backstage.io/techdocs-ref: dir:.
-  links:
-    - title: Serverless framework
-      url: https://www.serverless.com/framework/docs
-      icon: dashboard
-  description: ${{values.description}}
-  tags:
-    - backend
-    - sls
-    - nodejs
-spec:
-  type: service
-  lifecycle: experimental
-  owner: ${{values.owner}}
-  system: ${{values.system}}
-  consumesApis:
-    - ${{values.type}}-${{values.name}}-api
-  # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
-
-
 ---
-
 apiVersion: backstage.io/v1alpha1
-kind: API
+kind: Resource
 metadata:
-  name: ${{values.type}}-${{values.name}}-api
-  description: A very basic ${{values.type}}-${{values.name}} api, ${{values.description}}
+  name: ${{values.type}}-${{values.name}}-database
+  description: SQL database
+  links:
+    - url: postgres://miusuario:mipassword@localhost:5432/mi_base_de_datos
+      icon: dashboard
 spec:
-  type: openapi
+  type: database
   lifecycle: experimental
   owner: ${{values.owner}}
   system: ${{values.system}}
-  definition: |
-    openapi: "3.0.1"
-    info:
-      title: "${{values.type}}-${{values.name}}-api"
-      description: "${{values.description}}"
-      version: "V0.0.1"
-    servers:
-    - url: https://{API_URL}/{API_STAGE}/
-      variables:
-        API_URL:
-          default: y9ggm5si49.execute-api.us-west-2.amazonaws.com
-          description: API URL provided by apigateway or custom domain
-        API_STAGE:
-          default: latest
-          description: API stage - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac arcu id libero lacinia congue. Nulla facilisi. Proin sagittis, velit eu accumsan auctor, quam ex viverra purus, vel tincidunt risus elit nec nunc. Sed sed mauris vitae orci egestas gravida in non ex. Etiam in ante a libero iaculis vulputate. Nulla facilisi. Morbi nec ultrices purus. Fusce dictum consectetur libero, ac laoreet velit sollicitudin sit amet. Sed fringilla ex vitae tortor semper, a varius dolor facilisis. Aliquam vel elit at quam scelerisque hendrerit. Nunc non neque ac nisi consequat bibendum vel eu urna.
-    paths:
-      /hello-world:
-        get:
-          summary: "Get hello world"
-          description: "Get datetime with a helloworld message"
-          responses:
-            "200":
-              description: "Returns hello world with datetime"
-              content:
-                application/json:
-                  schema:
-                    $ref: "#/components/schemas/greetingsBodyResponse"
-
-          x-amazon-apigateway-integration:
-            httpMethod: "POST"
-            uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:597701726802:function:${{values.type}}-${{values.name}}-{API_STAGE}-get-hello-world/invocations"
-            passthroughBehavior: "when_no_match"
-            type: "aws_proxy"
-        post:
-          summary: "Post hello world"
-          description: "Post that returns datetime with a helloworld message"
-          requestBody:
-            $ref: '#/components/requestBodies/greetingsBody'
-
-          responses:
-            "200":
-              description: "Returns hello world with datetime"
-              content:
-                application/json:
-                  schema:
-                    $ref: "#/components/schemas/greetingsBodyResponse"
-
-          x-amazon-apigateway-integration:
-            httpMethod: "POST"
-            uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:597701726802:function:${{values.type}}-${{values.name}}-{API_STAGE}-post-hello-world/invocations"
-            passthroughBehavior: "when_no_match"
-            type: "aws_proxy"
-    components:
-      schemas:
-        greetingsBody:
-          type: object
-          properties:
-            greetings:
-              type: string
-          required: ['greetings']
-        greetingsBodyResponse:
-          type: object
-          properties:
-            hello:
-              type: string
-
-      requestBodies:
-        greetingsBody:
-          description: Standard body
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/greetingsBody'
-          required: true
