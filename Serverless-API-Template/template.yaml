@@ -96,7 +96,7 @@ spec:
       action: http:backstage:request
       input:
         method: POST
-        path: '/api/proxy/self-service/create-db'
+        path: '/proxy/self-service/create-db'
 
     # - id: publish
     #   name: Publish
