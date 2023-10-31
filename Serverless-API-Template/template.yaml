@@ -98,30 +98,30 @@ spec:
         method: POST
         path: '/proxy/self-service/create-db'
 
-    # - id: publish
-    #   name: Publish
-    #   action: publish:github
-    #   input:
-    #     allowedHosts: ['github.com']
-    #     description: ${{ parameters.description }}
-    #     repoUrl: github.com?owner=hesitationgames&repo=${{ parameters.type }}-${{ parameters.name }}
-    #     repoVisibility: private
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: ${{ parameters.description }}
+        repoUrl: github.com?owner=hesitationgames&repo=${{ parameters.type }}-${{ parameters.name }}
+        repoVisibility: private
 
-    # - id: initial_pull_request
-    #   name: Initial pull requests
-    #   action: publish:github:pull-request
-    #   input:
-    #     repoUrl: github.com?owner=hesitationgames&repo=${{ parameters.type }}-${{ parameters.name }}
-    #     branchName: feature/initial-setup-${{ parameters.type }}-${{ parameters.name }}
-    #     title: initial-setup-${{ parameters.type }}-${{ parameters.name }}
-    #     description: Initial setup - ${{ parameters.description }}
+    - id: initial_pull_request
+      name: Initial pull requests
+      action: publish:github:pull-request
+      input:
+        repoUrl: github.com?owner=hesitationgames&repo=${{ parameters.type }}-${{ parameters.name }}
+        branchName: feature/initial-setup-${{ parameters.type }}-${{ parameters.name }}
+        title: initial-setup-${{ parameters.type }}-${{ parameters.name }}
+        description: Initial setup - ${{ parameters.description }}
 
-    # - id: register
-    #   name: Register
-    #   action: catalog:register
-    #   input:
-    #     repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-    #     catalogInfoPath: '/catalog-info.yaml'
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
 
   output:
     remoteUrl: ${{ steps.publish.output.remoteUrl }}
