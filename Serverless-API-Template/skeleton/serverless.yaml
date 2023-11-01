@@ -4,7 +4,6 @@ frameworkVersion: '3.2.0'
 
 provider:
   name: aws
-  profile: juan
   runtime: nodejs18.x
   endpointType: REGIONAL
   apiName: "${self:service}-${self:custom.stage}-api"
@@ -17,7 +16,7 @@ provider:
       schemas:
         post-hello-model:
           name: PostHelloModel
-          schema: ${file(./doc/openapi.yaml):components.schemas.greetingsBody}
+          schema: ${file(./docs/openapi.yaml):components.schemas.greetingsBody}
           description: "A Model validation for hello"
 
 package:
@@ -31,10 +30,9 @@ custom:
     prod: prod
     other: staging
   envtype: ${self:custom.static_envs.${opt:stage}, self:custom.static_envs.other}
-  documentation: ${file(./doc/openapi.yaml)}
+  documentation: ${file(./docs/openapi.yaml)}
 
 plugins:
-  # - serverless-offline
   - serverless-openapi-documenter
 
 functions:

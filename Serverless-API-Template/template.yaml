@@ -105,14 +105,14 @@ spec:
         allowedHosts: ['github.com']
         description: ${{ parameters.description }}
         repoUrl: github.com?owner=hesitationgames&repo=${{ parameters.type }}-${{ parameters.name }}
-        repoVisibility: private
+        repoVisibility: public
 
     - id: initial_pull_request
       name: Initial pull requests
       action: publish:github:pull-request
       input:
         repoUrl: github.com?owner=hesitationgames&repo=${{ parameters.type }}-${{ parameters.name }}
-        branchName: feature/initial-setup-${{ parameters.type }}-${{ parameters.name }}
+        branchName: dev
         title: initial-setup-${{ parameters.type }}-${{ parameters.name }}
         description: Initial setup - ${{ parameters.description }}
 
