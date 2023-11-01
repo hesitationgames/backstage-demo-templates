@@ -4,6 +4,8 @@ metadata:
   name: ${{values.type}}-${{values.name}}-app
   annotations:
     backstage.io/techdocs-ref: dir:.
+    aws.com/lambda-function-name: ${{values.type}}-${{values.name}}-dev-get-hello-world
+    aws.com/lambda-region: us-east-1
   links:
     - title: Serverless framework
       url: https://www.serverless.com/framework/docs
