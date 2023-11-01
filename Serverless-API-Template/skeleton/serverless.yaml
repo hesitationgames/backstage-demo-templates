@@ -16,7 +16,7 @@ provider:
       schemas:
         post-hello-model:
           name: PostHelloModel
-          schema: ${file(./docs/openapi.yaml):components.schemas.greetingsBody}
+          schema: ${file(./openapi.yaml):components.schemas.greetingsBody}
           description: "A Model validation for hello"
 
 package:
@@ -30,7 +30,7 @@ custom:
     prod: prod
     other: staging
   envtype: ${self:custom.static_envs.${opt:stage}, self:custom.static_envs.other}
-  documentation: ${file(./docs/openapi.yaml)}
+  documentation: ${file(./openapi.yaml)}
 
 plugins:
   - serverless-openapi-documenter
