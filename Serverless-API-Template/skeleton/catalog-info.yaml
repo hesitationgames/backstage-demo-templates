@@ -20,6 +20,8 @@ spec:
   system: ${{values.system}}
   consumesApis:
     - ${{values.type}}-${{values.name}}-api
+  providesApis:
+    - ${{values.type}}-${{values.name}}-api
 {% if values.database == true %}
   dependsOn:
     - resource:default/${{values.type}}-${{values.name}}-database
