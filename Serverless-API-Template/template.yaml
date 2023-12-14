@@ -90,14 +90,6 @@ spec:
           type_upper: ${{ parameters.type | upper}}
           system_upper: ${{ parameters.system | lower}}
 
-    - if: ${{ true if parameters.database else false}}
-      id: createDatabase
-      name: Creates a postgresDatabase
-      action: http:backstage:request
-      input:
-        method: POST
-        path: '/proxy/self-service/create-db'
-
     - id: publish
       name: Publish
       action: publish:github
@@ -107,6 +99,21 @@ spec:
         repoUrl: github.com?owner=hesitationgames&repo=${{ parameters.type }}-${{ parameters.name }}
         repoVisibility: public
 
+    - if: ${{ true if parameters.database else false}}
+      id: createDatabase
+      name: Creates a postgresDatabase
+      action: http:backstage:request
+      input:
+        method: POST
+        path: '/proxy/self-service/create-db'
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+
     - id: initial_pull_request
       name: Initial pull requests
       action: publish:github:pull-request
@@ -115,13 +122,6 @@ spec:
         branchName: dev
         title: initial-setup-${{ parameters.type }}-${{ parameters.name }}
         description: Initial setup - ${{ parameters.description }}
-
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-        catalogInfoPath: '/catalog-info.yaml'
 
   output:
     remoteUrl: ${{ steps.publish.output.remoteUrl }}
